@@ -54,7 +54,11 @@ or use MacPorts (http://www.macports.com)
 
 == INSTALL:
 
-* sudo gem install rqr
+
+* "cd" to this folder
+* "rake package" (install the required gems if requested)
+* "cd pkg"
+* "sudo gem install rqr"
 
 
 == LICENSE:
