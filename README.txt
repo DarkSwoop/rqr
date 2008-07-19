@@ -46,6 +46,12 @@ If using OSX, Use Fink(http://www.finkproject.org) Universal Binary libs.
 * sudo fink install libpng
 * sudo fink install libtiff
 
+or use MacPorts (http://www.macports.com)
+* sudo port install jpeg
+* sudo fink install libpng
+* sudo fink install libtiff
+
+
 == INSTALL:
 
 * sudo gem install rqr
