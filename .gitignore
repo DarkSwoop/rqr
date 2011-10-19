@@ -1,0 +1,10 @@
+*.log
+*.swp
+*.swo
+*.o
+.config
+pkg/
+InstalledFiles
+ext/rqr/Makefile
+ext/rqr/QR.bundle
+ext/rqr/conftest.dSYM/
