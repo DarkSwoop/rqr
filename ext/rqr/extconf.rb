@@ -13,10 +13,13 @@ require 'mkmf'
 require 'rbconfig'
 $libs = append_library($libs, "supc++")
 
-if File.exists?('/sw')
-  DARWIN_PORT_DIR = '/sw'
+FINK_DIR = '/sw'
+MACPORT_DIR = '/opt/local'
+
+if File.exists?(FINK_DIR)
+  DARWIN_PORT_DIR = FINK_DIR
 else
-  DARWIN_PORT_DIR = '/opt/local'
+  DARWIN_PORT_DIR = MACPORT_DIR
 end
 
 if RUBY_PLATFORM =~ /darwin/

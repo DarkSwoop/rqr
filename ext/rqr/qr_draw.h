@@ -1,16 +1,22 @@
 #ifndef _QR_DRAW_
 #define _QR_DRAW_
 
-#define MARGIN_SIZE      4	/* ãƒžãƒ¼ã‚¸ãƒ³ã‚µã‚¤ã‚º */
-#define MAX_MODULESIZE 177	/* ãƒ‡ãƒ¼ã‚¿ãƒã‚¤ãƒˆåˆ—ã®é ˜åŸŸã‚µã‚¤ã‚º */
+#define MARGIN_SIZE      4	/* ƒ}[ƒWƒ“ƒTƒCƒY */
+#define MAX_MODULESIZE 177	/* ƒf[ƒ^ƒoƒCƒg—ñ‚Ì—ÌˆæƒTƒCƒY */
 
 //=============================================================================
-// QRDraw ã‚¯ãƒ©ã‚¹
+// QRDraw ƒNƒ‰ƒX
 //=============================================================================
 class QRDraw
 {
 	public:
-		virtual ~QRDraw(){}
+		QRDraw(){
+			this->bit_image=NULL;
+		}
+		
+		virtual ~QRDraw(){
+			this->close();
+		}
 		
 		void setup(char *filename, int modulesize, int symbolsize){
 			this->msize = modulesize;
@@ -20,15 +26,23 @@ class QRDraw
 		}
 		
 	protected:
-		unsigned char **bit_image;	//ãƒ”ã‚¯ã‚»ãƒ«ã‚¤ãƒ¡ãƒ¼ã‚¸ã‚’æ ¼ç´ã™ã‚‹
-		int msize;					// 1ãƒ‰ãƒƒãƒˆã‚’è¡¨ç¾ã™ã‚‹ãƒ”ã‚¯ã‚»ãƒ«æ•°(=modulesize)
-		int rsize;					// ãƒžãƒ¼ã‚¸ãƒ³ã‚’å«ã‚ãŸå®Ÿéš›ã®ã‚¤ãƒ¡ãƒ¼ã‚¸ã®ä¸€è¾º
-		int ssize;					// ã‚·ãƒ³ãƒœãƒ«ã‚µã‚¤ã‚º(ãƒžãƒ¼ã‚¸ãƒ³ã‚’å«ã‚ãªã„ã€ãƒ‰ãƒƒãƒˆã®å€‹æ•°)
-		char *filename;				// ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
+		unsigned char **bit_image;	//ƒsƒNƒZƒ‹ƒCƒ[ƒW‚ðŠi”[‚·‚é
+		int msize;					// 1ƒhƒbƒg‚ð•\Œ»‚·‚éƒsƒNƒZƒ‹”(=modulesize)
+		int rsize;					// ƒ}[ƒWƒ“‚ðŠÜ‚ß‚½ŽÀÛ‚ÌƒCƒ[ƒW‚Ìˆê•Ó
+		int ssize;					// ƒVƒ“ƒ{ƒ‹ƒTƒCƒY(ƒ}[ƒWƒ“‚ðŠÜ‚ß‚È‚¢Aƒhƒbƒg‚ÌŒÂ”)
+		char *filename;				// •Û‘¶‚·‚éƒtƒ@ƒCƒ‹–¼
 
 	public:
 		virtual int draw(char *filename, int modulesize, int symbolsize, 
 							unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE], void *opt) = 0;
+		void close(){
+			int i;
+			if(this->bit_image){
+				for(i=0; i<this->rsize; i++) free(this->bit_image[i]);
+				free(this->bit_image);
+			}
+			this->bit_image=NULL;
+		}
 };
 
 #endif

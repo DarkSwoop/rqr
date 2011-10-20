@@ -2135,6 +2135,27 @@ fail:
 }
 
 
+SWIGINTERN VALUE
+_wrap_QRDraw_close(int argc, VALUE *argv, VALUE self) {
+  QRDraw *arg1 = (QRDraw *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_QRDraw, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "QRDraw *","close", 1, self )); 
+  }
+  arg1 = reinterpret_cast< QRDraw * >(argp1);
+  (arg1)->close();
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
 swig_class SwigClassQRDrawJPEG;
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
@@ -2377,6 +2398,11 @@ fail:
 }
 
 
+SWIGINTERN void
+free_QRDrawPS(QRDrawPS *arg1) {
+    delete arg1;
+}
+
 SWIGINTERN VALUE
 _wrap_QRDrawPS_draw(int argc, VALUE *argv, VALUE self) {
   QRDrawPS *arg1 = (QRDrawPS *) 0 ;
@@ -2441,11 +2467,6 @@ fail:
   return Qnil;
 }
 
-
-SWIGINTERN void
-free_QRDrawPS(QRDrawPS *arg1) {
-    delete arg1;
-}
 
 swig_class SwigClassQRDrawTIFF;
 
@@ -4148,6 +4169,7 @@ SWIGEXPORT void Init_QR(void) {
   rb_undef_alloc_func(SwigClassQRDraw.klass);
   rb_define_method(SwigClassQRDraw.klass, "setup", VALUEFUNC(_wrap_QRDraw_setup), -1);
   rb_define_method(SwigClassQRDraw.klass, "draw", VALUEFUNC(_wrap_QRDraw_draw), -1);
+  rb_define_method(SwigClassQRDraw.klass, "close", VALUEFUNC(_wrap_QRDraw_close), -1);
   SwigClassQRDraw.mark = 0;
   SwigClassQRDraw.destroy = (void (*)(void *)) free_QRDraw;
   SwigClassQRDraw.trackObjects = 0;

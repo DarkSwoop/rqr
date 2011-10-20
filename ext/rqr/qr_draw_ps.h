@@ -13,7 +13,7 @@
 #endif
 
 //=============================================================================
-// QRDrawPS ã‚¯ãƒ©ã‚¹
+// QRDrawPS ƒNƒ‰ƒX
 //=============================================================================
 class QRDrawPS : public QRDraw
 {
@@ -28,7 +28,8 @@ class QRDrawPS : public QRDraw
 		void littleEndian(int data, unsigned char *lt);
 		
 	public:
-		QRDrawPS();
+		QRDrawPS(){}
+		~QRDrawPS(){}
 		int draw(char *filename, int modulesize, int symbolsize, 
 							unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE], void *opt);
 };

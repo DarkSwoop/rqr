@@ -1,32 +1,5 @@
 #include "qr_draw_tiff.h"
 
-//=================================================================================
-// QRDrawPNG::QRDrawPNG
-//=================================================================================
-QRDrawTIFF::QRDrawTIFF()
-{
-#ifdef USE_TIFF
-	bit_image  = NULL;
-#endif
-}
-
-//=================================================================================
-// QRDrawTIFF::~QRDrawTIFF
-//=================================================================================
-QRDrawTIFF::~QRDrawTIFF()
-{
-#ifdef USE_TIFF
-	int i;
-	
-	if(bit_image){
-		for(i=0; i<this->rsize; i++){
-			free(bit_image[i]);
-		}
-		free(bit_image);
-	}
-#endif
-}
-
 //=============================================================================
 // QRDrawPNG::draw
 //=============================================================================
@@ -53,7 +26,7 @@ int QRDrawTIFF::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 #ifdef USE_TIFF
 	int bitw = (int)ceil(this->rsize/8) + 1;
 	
-	/* å®Ÿéš›ã«ãƒ‡ãƒ¼ã‚¿ã‚’ç½®ãé ˜åŸŸã‚’ç¢ºä¿ */
+	/* ÀÛ‚Éƒf[ƒ^‚ğ’u‚­—Ìˆæ‚ğŠm•Û */
 	bit_image = (unsigned char **)malloc(sizeof(unsigned char *) * this->rsize);
 	for(int i=0; i<this->rsize; i++){
 		bit_image[i] = (unsigned char *)malloc(bitw);
@@ -61,12 +34,12 @@ int QRDrawTIFF::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 	}
 
 	for(int i=0; i<this->ssize; i++){
-		int dp  = MARGIN_SIZE*this->msize / 8;			//æ¨ªæ–¹å‘ã®ãƒã‚¤ãƒˆä½ç½®
-		int sht =(MARGIN_SIZE*this->msize % 8) ? 3 : 7;	//ãƒ“ãƒƒãƒˆã‚·ãƒ•ãƒˆ
-		unsigned char c = 0;							//1ãƒã‚¤ãƒˆã®æ§‹æˆã‚’ä¿å­˜
+		int dp  = MARGIN_SIZE*this->msize / 8;			//‰¡•ûŒü‚ÌƒoƒCƒgˆÊ’u
+		int sht =(MARGIN_SIZE*this->msize % 8) ? 3 : 7;	//ƒrƒbƒgƒVƒtƒg
+		unsigned char c = 0;							//1ƒoƒCƒg‚Ì\¬‚ğ•Û‘¶
 
 		for(int j=0; j<this->ssize; j++){
-			/* 1è¡Œåˆ†ç”Ÿæˆ */
+			/* 1s•ª¶¬ */
 			for(int k=0; k<this->msize; k++){
 				c += (data[j][i] << sht);
 				sht--;
@@ -80,7 +53,7 @@ int QRDrawTIFF::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 				}
 			}
 		}
-		/* ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚µã‚¤ã‚ºåˆ†ç¸¦æ–¹å‘ã«å¢—ã‚„ã™ */
+		/* ƒ‚ƒWƒ…[ƒ‹ƒTƒCƒY•ªc•ûŒü‚É‘‚â‚· */
 		for(int k=1; k<this->msize; k++){
 			memcpy(bit_image[(i+MARGIN_SIZE)*this->msize+k], bit_image[(i+MARGIN_SIZE)*this->msize], bitw);
 		}
@@ -104,21 +77,21 @@ int QRDrawTIFF::write()
 	/* Open the TIFF file */
 	if( (tiff=TIFFOpen(this->filename, "w")) == NULL ) return(1);
 
-	/* ã‚¿ã‚° */
-	TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, this->rsize);				/* å¹…(ãƒ”ã‚¯ã‚»ãƒ«æ•°) */
-	TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, this->rsize);				/* é«˜(ã‚¹ã‚­ãƒ£ãƒ³ãƒ©ã‚¤ãƒ³æ•°) */
-	TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_NONE);			/* åœ§ç¸®ãƒ¢ãƒ¼ãƒ‰ */
-	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, 1);						/* ãƒ”ã‚¯ã‚»ãƒ«ã®æ·±ã• */
-	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);	/* ã‚«ãƒ©ãƒ¼ã‚¿ã‚¤ãƒ— */
-	TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, 1);						/* ã‚«ãƒ©ãƒ¼ãƒ—ãƒ¬ãƒ¼ãƒ³æ•° */
-	TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);		/* ã‚¹ã‚­ãƒ£ãƒ³æ–¹å‘ */
+	/* ƒ^ƒO */
+	TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, this->rsize);				/* •(ƒsƒNƒZƒ‹”) */
+	TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, this->rsize);				/* ‚(ƒXƒLƒƒƒ“ƒ‰ƒCƒ“”) */
+	TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_NONE);			/* ˆ³kƒ‚[ƒh */
+	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, 1);						/* ƒsƒNƒZƒ‹‚Ì[‚³ */
+	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);	/* ƒJƒ‰[ƒ^ƒCƒv */
+	TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, 1);						/* ƒJƒ‰[ƒvƒŒ[ƒ“” */
+	TIFFSetField(tiff, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);		/* ƒXƒLƒƒƒ“•ûŒü */
 	TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);		/* ? */
-	TIFFSetField(tiff, TIFFTAG_XRESOLUTION, 72.0);						/* è§£åƒåº¦ */
-	TIFFSetField(tiff, TIFFTAG_YRESOLUTION, 72.0);						/* è§£åƒåº¦ */
-	TIFFSetField(tiff, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);			/* è§£åƒåº¦ã®å˜ä½(RESUNIT_INCH:ã‚¤ãƒ³ãƒ) */
-	TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, this->rsize);				/* 1ã‚¹ãƒˆãƒªãƒƒãƒ—ã«ä½•è¡Œæ ¼ç´ã•ã‚Œã‚‹ã‹ */
+	TIFFSetField(tiff, TIFFTAG_XRESOLUTION, 72.0);						/* ‰ğ‘œ“x */
+	TIFFSetField(tiff, TIFFTAG_YRESOLUTION, 72.0);						/* ‰ğ‘œ“x */
+	TIFFSetField(tiff, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);			/* ‰ğ‘œ“x‚Ì’PˆÊ(RESUNIT_INCH:ƒCƒ“ƒ`) */
+	TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, this->rsize);				/* 1ƒXƒgƒŠƒbƒv‚É‰½sŠi”[‚³‚ê‚é‚© */
 	
-	/* 1è¡Œãšã¤æ›¸ãè¾¼ã¿ */
+	/* 1s‚¸‚Â‘‚«‚İ */
 	for(i=0 ; i<this->rsize ; i++){
 		if( TIFFWriteScanline(tiff, bit_image[i], i, 0) < 0 ){
 			TIFFClose(tiff);
