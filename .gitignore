@@ -2,6 +2,7 @@
 *.swp
 *.swo
 *.o
+*.gem
 .config
 pkg/
 InstalledFiles
