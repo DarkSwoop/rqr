@@ -1,4 +1,6 @@
 #include "qr_draw_png.h"
+#include <string.h>
+#include <zlib.h>
 
 //=============================================================================
 // QRDrawPNG::draw
