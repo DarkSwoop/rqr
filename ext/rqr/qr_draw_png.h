@@ -10,7 +10,7 @@
 #endif
 
 //=============================================================================
-// QRDrawPNG ã‚¯ãƒ©ã‚¹
+// QRDrawPNG ƒNƒ‰ƒX
 //=============================================================================
 class QRDrawPNG : public QRDraw
 {
@@ -19,8 +19,8 @@ class QRDrawPNG : public QRDraw
 		int write();
 	
 	public:
-		QRDrawPNG();
-		~QRDrawPNG();
+		QRDrawPNG(){}
+		~QRDrawPNG(){}
 		int draw(char *filename, int modulesize, int symbolsize,
                       unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE], void *opt);
 };

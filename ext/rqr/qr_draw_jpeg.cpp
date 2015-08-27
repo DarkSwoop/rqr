@@ -1,32 +1,5 @@
 #include "qr_draw_jpeg.h"
 
-//=================================================================================
-// QRDrawJPEG::QRDrawJPEG
-//=================================================================================
-QRDrawJPEG::QRDrawJPEG()
-{
-#ifdef USE_JPG
-	bit_image  = NULL;
-#endif
-}
-
-//=================================================================================
-// QRDrawJPEG::~QRDrawJPEG
-//=================================================================================
-QRDrawJPEG::~QRDrawJPEG()
-{
-#ifdef USE_JPG
-	int i;
-	
-	if(bit_image){
-		for(i=0; i<this->rsize; i++){
-			free(bit_image[i]);
-		}
-		free(bit_image);
-	}
-#endif
-}
-
 //=============================================================================
 // QRDrawJPEG::draw
 //=============================================================================
@@ -36,10 +9,10 @@ int QRDrawJPEG::draw(char *filename, int modulesize, int symbolsize,
 #ifdef USE_JPG
 	setup(filename, modulesize, symbolsize);
 	
-	/* ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«ã‚¤ãƒ¡ãƒ¼ã‚¸ã®æ§‹ç¯‰ */
+	/* ƒOƒŒ[ƒXƒP[ƒ‹ƒCƒ[ƒW‚Ì\’z */
 	if( this->raster(data) ) return(1);
 	
-	/* JPEGæ›¸ãå‡ºã— */
+	/* JPEG‘‚«o‚µ */
 	if( this->write() ) return(1);
 	
 	return(0);
@@ -56,7 +29,7 @@ int QRDrawJPEG::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 #ifdef USE_JPG
 	int i, j, k;
 	
-	/* å®Ÿéš›ã«ãƒ‡ãƒ¼ã‚¿ã‚’ç½®ãé ˜åŸŸã‚’ç¢ºä¿ */
+	/* ÀÛ‚Éƒf[ƒ^‚ğ’u‚­—Ìˆæ‚ğŠm•Û */
 	bit_image = (unsigned char **)malloc(sizeof(unsigned char *) * this->rsize);
 	for(i=0; i<this->rsize; i++){
 		bit_image[i] = (unsigned char *)malloc(this->rsize);
@@ -65,12 +38,12 @@ int QRDrawJPEG::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 	
 	for(i=0; i<this->ssize; i++){
 		for(j=0; j<this->ssize; j++){
-			/* 1è¡Œåˆ†ç”Ÿæˆ */
+			/* 1s•ª¶¬ */
 			for(k=0; k<this->msize; k++){
 				bit_image[(i+MARGIN_SIZE)*this->msize][ (j+MARGIN_SIZE)*this->msize + k ] = data[j][i] ? 0 : 255;
 			}
 		}
-		/* ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚µã‚¤ã‚ºåˆ†ç¸¦æ–¹å‘ã«å¢—ã‚„ã™ */
+		/* ƒ‚ƒWƒ…[ƒ‹ƒTƒCƒY•ªc•ûŒü‚É‘‚â‚· */
 		for(k=1; k<this->msize; k++){
 			memcpy(bit_image[(i+MARGIN_SIZE)*this->msize+k], bit_image[(i+MARGIN_SIZE)*this->msize], this->rsize);
 		}
@@ -94,7 +67,7 @@ int QRDrawJPEG::write()
 	FILE *stream;
 	int i;
 
-	/* å‡ºåŠ›å…ˆè¨­å®š */
+	/* o—Íæİ’è */
 	if(!this->filename){
 		stream = stdout;
 	}else{

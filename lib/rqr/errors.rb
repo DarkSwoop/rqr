@@ -4,6 +4,8 @@ module RQR
 
   class FormatNotFoundException < Exception; end
 
+  class BlockNotFoundException < Exception; end
+
   class ImageException < Exception; end
   
 end

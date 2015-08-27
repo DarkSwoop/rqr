@@ -1,31 +1,6 @@
 #include "qr_draw_png.h"
-
-//=================================================================================
-// QRDrawPNG::QRDrawPNG
-//=================================================================================
-QRDrawPNG::QRDrawPNG()
-{
-#ifdef USE_PNG
-	bit_image = NULL;
-#endif
-}
-
-//=================================================================================
-// QRDrawPNG::~QRDrawPNG
-//=================================================================================
-QRDrawPNG::~QRDrawPNG()
-{
-#ifdef USE_PNG
-	int i;
-	
-	if(bit_image){
-		for(i=0; i<this->rsize; i++){
-			free(bit_image[i]);
-		}
-		free(bit_image);
-	}
-#endif
-}
+#include <string.h>
+#include <zlib.h>
 
 //=============================================================================
 // QRDrawPNG::draw
@@ -36,10 +11,10 @@ int QRDrawPNG::draw(char *filename, int modulesize, int symbolsize,
 #ifdef USE_PNG
 	setup(filename, modulesize, symbolsize);
 	
-	/* „ÉãÂÄ§„Ç§„É°„Éº„Ç∏„ÅÆÊßãÁØâ */
+	/* ÉjílÉCÉÅÅ[ÉWÇÃç\íz */
 	if( this->raster(data) ) return(1);
 	
-	/* PNGÊõ∏„ÅçÂá∫„Åó */
+	/* PNGèëÇ´èoÇµ */
 	if( this->write() ) return(1);
 	
 	return(0);
@@ -56,7 +31,7 @@ int QRDrawPNG::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 #ifdef USE_PNG
 	int bitw = (int)ceil(this->rsize/8) + 1;
 	
-	/* ÂÆüÈöõ„Å´„Éá„Éº„Çø„ÇíÁΩÆ„ÅèÈ†òÂüü„ÇíÁ¢∫‰øù */
+	/* é¿ç€Ç…ÉfÅ[É^ÇíuÇ≠óÃàÊÇämï€ */
 	bit_image = (unsigned char **)malloc(sizeof(unsigned char *) * this->rsize);
 	for(int i=0; i<this->rsize; i++){
 		bit_image[i] = (unsigned char *)malloc(bitw);
@@ -64,12 +39,12 @@ int QRDrawPNG::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 	}
 
 	for(int i=0; i<this->ssize; i++){
-		int dp  = MARGIN_SIZE*this->msize / 8;			//Ê®™ÊñπÂêë„ÅÆ„Éê„Ç§„Éà‰ΩçÁΩÆ
-		int sht =(MARGIN_SIZE*this->msize % 8) ? 3 : 7;	//„Éì„ÉÉ„Éà„Ç∑„Éï„Éà
-		unsigned char c = 0;							//1„Éê„Ç§„Éà„ÅÆÊßãÊàê„Çí‰øùÂ≠ò
+		int dp  = MARGIN_SIZE*this->msize / 8;			//â°ï˚å¸ÇÃÉoÉCÉgà íu
+		int sht =(MARGIN_SIZE*this->msize % 8) ? 3 : 7;	//ÉrÉbÉgÉVÉtÉg
+		unsigned char c = 0;							//1ÉoÉCÉgÇÃç\ê¨Çï€ë∂
 		
 		for(int j=0; j<this->ssize; j++){
-			/* 1Ë°åÂàÜÁîüÊàê */
+			/* 1çsï™ê∂ê¨ */
 			for(int k=0; k<this->msize; k++){
 				c += (data[j][i] << sht);
 				sht--;
@@ -83,7 +58,7 @@ int QRDrawPNG::raster(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 				}
 			}
 		}
-		/* „É¢„Ç∏„É•„Éº„É´„Çµ„Ç§„Ç∫ÂàÜÁ∏¶ÊñπÂêë„Å´Â¢ó„ÇÑ„Åô */
+		/* ÉÇÉWÉÖÅ[ÉãÉTÉCÉYï™ècï˚å¸Ç…ëùÇ‚Ç∑ */
 		for(int k=1; k<this->msize; k++){
 			memcpy(bit_image[(i+MARGIN_SIZE)*this->msize+k], bit_image[(i+MARGIN_SIZE)*this->msize], bitw);
 		}
@@ -105,7 +80,7 @@ int QRDrawPNG::write()
 	png_infop   info_ptr;
 	FILE *stream;
 	
-	/* Âá∫ÂäõÂÖàË®≠ÂÆö */
+	/* èoóÕêÊê›íË */
 	if(!this->filename){
 		stream = stdout;
 	}else{
@@ -118,15 +93,15 @@ int QRDrawPNG::write()
 	png_init_io(png_ptr, stream);
 	png_set_filter(png_ptr, 0, PNG_ALL_FILTERS);
 	png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-	png_set_invert_mono(png_ptr);	//ÁôΩÈªíÂèçËª¢
+	png_set_invert_mono(png_ptr);	//îíçïîΩì]
 	
-	/* IHDR„ÉÅ„É£„É≥„ÇØÊÉÖÂ†±„ÇíË®≠ÂÆö */
+	/* IHDRÉ`ÉÉÉìÉNèÓïÒÇê›íË */
 	png_set_IHDR(png_ptr, 						//png_structp
 				 info_ptr, 						//png_infop
 				 this->rsize,					//width
 				 this->rsize, 					//height
-				 1, 							//bit_depth(„ÉãÂÄ§)
-				 PNG_COLOR_TYPE_GRAY, 			//Color„Çø„Ç§„Éó(„ÉãÂÄ§)
+				 1, 							//bit_depth(Éjíl)
+				 PNG_COLOR_TYPE_GRAY, 			//ColorÉ^ÉCÉv(Éjíl)
 				 PNG_INTERLACE_NONE, 			//interlace_method
 				 PNG_COMPRESSION_TYPE_DEFAULT, 	//compression_method
 				 PNG_FILTER_TYPE_DEFAULT);		//filter_method

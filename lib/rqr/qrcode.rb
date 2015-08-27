@@ -13,7 +13,15 @@ module RQR
   		@options = { :level => 1, :version => 0, :auto_extend => true, 
   		             :masking => -1, :eps_preview => false, :module_size => 4 }
       @options.merge!(options)
+      @imager = nil
   	end
+  	
+  	def self.create(options = {})
+  	  raise BlockNotFoundException.new("Block not found!") unless block_given?
+  	  qrcode = RQR::QRCode.new(options)
+  	  yield qrcode
+  	  qrcode.close
+	  end
   	
     # data::  data for qrcode
     # path::  path for qrcode image file
@@ -45,7 +53,7 @@ module RQR
 	
   	def close()
   	  @encoder = nil if @encoder
-  	  @imager = nil if @imager
+  	  (@imager.close; @imager = nil) if @imager
   	end
 	
   private

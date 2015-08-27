@@ -1,12 +1,5 @@
 #include "qr_draw_ps.h"
 
-//=================================================================================
-// QRDrawPS::QRDrawPS
-//=================================================================================
-QRDrawPS::QRDrawPS()
-{
-}
-
 //=============================================================================
 // QRDrawPS::draw
 //=============================================================================
@@ -46,34 +39,34 @@ int QRDrawPS::write2(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE])
 	
 	if((stream=fopen(this->filename, "wb")) == NULL) return(1);
 
-	/* ãƒ€ãƒŸãƒ¼ãƒ˜ãƒƒãƒ€ãƒ¼æ›¸ãè¾¼ã¿ */
+	/* ƒ_ƒ~[ƒwƒbƒ_[‘‚«‚İ */
 	this->write_header(stream);
 	
-	/* TIFFæ›¸ãè¾¼ã¿ */
+	/* TIFF‘‚«‚İ */
 	this->write_preview(stream, data);
 	fclose(stream);
 	
-	/* EPSæ›¸ãè¾¼ã¿ */
+	/* EPS‘‚«‚İ */
 	this->write(data, "a");
 	
-	/* EPSã‚µã‚¤ã‚ºç®—å‡º */
+	/* EPSƒTƒCƒYZo */
 	stat(this->filename, &st);
 	unsigned int esize = st.st_size - (this->tsize+30);
 	
-	/* ãƒ˜ãƒƒãƒ€ãƒ¼æ›¸ãæ›ãˆ */
+	/* ƒwƒbƒ_[‘‚«Š·‚¦ */
 	if((stream=fopen(this->filename, "rb+")) == NULL) return(1);
 
-	/* PSé–‹å§‹ä½ç½® */
+	/* PSŠJnˆÊ’u */
 	fseek(stream, 4, SEEK_SET);
 	this->littleEndian(30+this->tsize, lt);
 	fprintf(stream, "%c%c%c%c", lt[0], lt[1], lt[2], lt[3]);
 
-	/* PSé•· */
+	/* PS’· */
 	fseek(stream, 8, SEEK_SET);
 	this->littleEndian(esize, lt);
 	fprintf(stream, "%c%c%c%c", lt[0], lt[1], lt[2], lt[3]);
 	
-	/* TIFFãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼é•· */
+	/* TIFFƒvƒŒƒrƒ…[’· */
 	fseek(stream, 24, SEEK_SET);
 	this->littleEndian(this->tsize, lt);
 	fprintf(stream, "%c%c%c%c", lt[0], lt[1], lt[2], lt[3]);
@@ -93,27 +86,27 @@ void QRDrawPS::write_header(FILE *stream)
 {
 	unsigned char lt[4];
 	
-	/* ãƒŠãƒŸãƒ¢ãƒ‹ */
+	/* ƒiƒ~ƒ‚ƒj */
 	fprintf(stream, "%c%c%c%c", 0xC5, 0xD0, 0xD3, 0xC6);
 	
-	/* PostScripté–‹å§‹ä½ç½® */
+	/* PostScriptŠJnˆÊ’u */
 	fprintf(stream, "%c%c%c%c", 0x00, 0x00, 0x00, 0x00);
 	
-	/* PostScripté•·ã• */
+	/* PostScript’·‚³ */
 	fprintf(stream, "%c%c%c%c", 0x00, 0x00, 0x00, 0x00);
 
 	/* MetaFile */
 	fprintf(stream, "%c%c%c%c", 0x00, 0x00, 0x00, 0x00);
 	fprintf(stream, "%c%c%c%c", 0x00, 0x00, 0x00, 0x00);
 	
-	/* TIFFãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼é–‹å§‹ä½ç½® */
+	/* TIFFƒvƒŒƒrƒ…[ŠJnˆÊ’u */
 	littleEndian(30, lt);
 	fprintf(stream, "%c%c%c%c", lt[0], lt[1], lt[2], lt[3]);
 	
-	/* TIFFãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼é•· */
+	/* TIFFƒvƒŒƒrƒ…[’· */
 	fprintf(stream, "%c%c%c%c", 0x00, 0x00, 0x00, 0x00);
 
-	/* ãƒã‚§ãƒƒã‚¯ã‚µãƒ  */
+	/* ƒ`ƒFƒbƒNƒTƒ€ */
 	fprintf(stream, "%c%c", 0xff, 0xff);
 }
 
@@ -142,7 +135,7 @@ int QRDrawPS::write_preview(FILE *stream, unsigned char data[MAX_MODULESIZE][MAX
 	tmpnam(tmp);
 	if( tif.draw(tmp, this->msize, this->ssize, data, NULL) ) return(1);
 	
-	/* TIFFã‚’ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã‚’å–å¾—ã™ã‚‹ */
+	/* TIFF‚ğƒI[ƒvƒ“‚µ‚Äƒtƒ@ƒCƒ‹ƒTƒCƒY‚ğæ“¾‚·‚é */
 	if((t=fopen(tmp, "rb")) == NULL){
 		remove(tmp);
 		return(1);
@@ -151,7 +144,7 @@ int QRDrawPS::write_preview(FILE *stream, unsigned char data[MAX_MODULESIZE][MAX
 	this->tsize = ftell(t);
 	fseek(t, 0, SEEK_SET);
 
-	/* TIFFæœ¬ä½“ã®æ›¸ãè¾¼ã¿ */
+	/* TIFF–{‘Ì‚Ì‘‚«‚İ */
 	p = (unsigned char *)malloc(this->tsize);
 	fread(p, 1, this->tsize, t);
 	fwrite(p, 1, this->tsize, stream);
@@ -209,7 +202,7 @@ int QRDrawPS::write(unsigned char data[MAX_MODULESIZE][MAX_MODULESIZE], char *mo
 	fprintf(stream, "1 setgray\n");
 	fprintf(stream, "fill\n");
 	
-	// ãƒ‰ãƒƒãƒˆæç”»
+	// ƒhƒbƒg•`‰æ
 	for(i=0; i<this->ssize; i++){
 		for(j=0; j<this->ssize; j++) fprintf(stream, "%d ", data[j][i]);
 		fprintf(stream, "\n");
